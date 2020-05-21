@@ -1,7 +1,7 @@
 FROM php:7.0-apache
 
 RUN apt-get update \
-    && apt-get install -y --force-yes --no-install-recommends libgraphicsmagick1-dev libpng12-dev libjpeg-dev subversion \
+    && apt-get install -y --force-yes --no-install-recommends libgraphicsmagick1-dev libpng-dev libjpeg-dev subversion \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
@@ -19,8 +19,8 @@ RUN { \
       echo '</Directory>'; \
     } >> /etc/apache2/conf-available/photon.conf
 
-RUN {
-	echo 'ServerName localhost';\
+RUN { \
+	echo 'ServerName localhost'; \
     } >> /etc/apache2/apache2.conf
 
 RUN a2enmod rewrite
@@ -29,5 +29,4 @@ RUN a2enconf photon
 
 RUN svn co --quiet --trust-server-cert --non-interactive https://code.svn.wordpress.org/photon /var/www/html
 
-# Remove filter_var check that prevents connecting to local IP addresses (photon r436).
 RUN sed -i.bak -e 's/ *FILTER_FLAG_NO_PRIV_RANGE *|//g' /var/www/html/index.php
